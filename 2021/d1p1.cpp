@@ -3,21 +3,20 @@
 #include <limits>
 using namespace std;
 
-int main(int argc, char **argv)
-{
-	ifstream in (argv[1]);
-	int last_number = numeric_limits<int>::max();
-	int number_of_increasing_numbers = 0;
+int main(int argc, char **argv){
+	ifstream in (argv[1]); // input file
+	int lastNumber = numeric_limits<int>::max();
+	int amountOfIncreasingNumbers = 0;
 	int number;
 
 	while (in >> number)  {
-		if (number > last_number) {
-			number_of_increasing_numbers = number_of_increasing_numbers + 1;
+		if (number > lastNumber) {
+			amountOfIncreasingNumbers = amountOfIncreasingNumbers + 1;
 		}
-		last_number = number;
+		lastNumber = number;
 	}
 
-	printf("%d", number_of_increasing_numbers);
+	printf("%d", amountOfIncreasingNumbers);
 	return 0;
 }
 

@@ -25,7 +25,7 @@ int main(int argc, char **argv){
 			slidingWindow[initSlidingWindowIx] = number;
 			initSlidingWindowIx = initSlidingWindowIx - 1; // add it from the back of the array
 		} else {
-			oldSum =  slidingWindow[0] + slidingWindow[1] + slidingWindow[2];
+			oldSum =  currentSum;
 			slideWindowUsing(slidingWindow, number); //slide the 'window' down the array, adding the current number and dropping off the oldest
 			currentSum = slidingWindow[0] + slidingWindow[1] + slidingWindow[2];
 
