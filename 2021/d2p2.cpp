@@ -19,8 +19,6 @@ int main(int argc, char **argv){
             aim -= stoi(amount);
         } else if (direction == "down"){
             aim += stoi(amount);
-        } else {
-            cout << "Something happened" << endl;
         }
     }
 
