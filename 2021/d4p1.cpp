@@ -43,12 +43,6 @@ int main(int argc, char **argv){
     }
     in.close();
 
-    cout << "Input has been processed. Example output: " << endl;
-    for (cell c: boards[0]) {
-        printf("[%d, %d] ", c.value, c.ticked);
-    }
-    cout << endl;
-
     //playing the actual game
     bool winner = false;
     vector<cell> winningBoard;
@@ -103,15 +97,13 @@ void checkSolution(vector<vector<cell>> boards, int boardNo, int number, bool &w
     //check rows 
     for (int row = 0; row < BOARD_DIM; row++) {
         for (int col = 0; col < BOARD_DIM; col++) {
-            if (!boards[boardNo][row * BOARD_DIM + col].ticked)  { // if the current cell is not ticked, go to next row (it can't be a completed row)
-                printf("Breaking because (%d, %d) is not ticked.\n", col, row);
+            if (!(boards[boardNo][row * BOARD_DIM + col].ticked)) {
                 break;
-            } else if (row == BOARD_DIM - 1 && boards[boardNo][row * BOARD_DIM + col].ticked) { //if at end of row and it's ticked, the rest must be ticked
+            } else if (col == BOARD_DIM - 1 && boards[boardNo][row * BOARD_DIM + col].ticked) {
                 winner = true;
-                printf("Found a winner: col %d in board %d.\n", col, boardNo);
-                return; 
+                return;
             } else {
-                printf("Continuing because (%d, %d) is ticked: %d.\n", col, row, boards[boardNo][row * BOARD_DIM + col].ticked );
+                continue;
             }
         }
     }
@@ -119,28 +111,21 @@ void checkSolution(vector<vector<cell>> boards, int boardNo, int number, bool &w
     //check columns
     for (int col = 0; col < BOARD_DIM; col++) {
         for (int row = 0; row < BOARD_DIM; row++) {
-            if (!boards[boardNo][row * BOARD_DIM + col].ticked) {
-                printf("For bn %d at %d: %d\n", boardNo, row * BOARD_DIM + col, boards[boardNo][row * BOARD_DIM + col].ticked);
+            if (!(boards[boardNo][row * BOARD_DIM + col].ticked)) {
                 break;
-            } else if (col == BOARD_DIM - 1 && boards[boardNo][row * BOARD_DIM + col].ticked) {
+            } else if (row == BOARD_DIM - 1 && boards[boardNo][row * BOARD_DIM + col].ticked) {
                 winner = true;
-                printf("Found a winner: row %d in board %d.\n", row, boardNo);
-                for (cell c: boards[boardNo]) {
-                    printf("[%d, %d] ", c.value, c.ticked);
-                }
                 return;
             } else {
-                printf("Continuing because (%d, %d) is ticked: %d.\n", col, row, boards[boardNo][row * BOARD_DIM + col].ticked );
+                continue;
             }
         }
     }
 }
 
 void tickNumber(vector<vector<cell>> &boards, int boardNo, int number) {
-    printf("For number %d:\n", number);
     for (auto &c: boards[boardNo]) {
         if (c.value == number) {
-            printf("For board %d cell %d\n", boardNo, c.value);
             c.ticked = true;
         }
     }
