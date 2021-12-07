@@ -4,6 +4,7 @@
 using namespace std;
 #define BOARD_DIM 5
 
+// represents a cell on a bingo board - what it's value is and whether it has been ticked.
 typedef struct {
     int value;
     bool ticked = 0;
@@ -26,15 +27,15 @@ int main(int argc, char **argv){
 
     // getting input
     while (in >> line) {
-        if (firstLine) {
+        if (firstLine) { // this is where all the numbers come from
             numbers = createNumbers(line);
             firstLine = false;
-        } else {
+        } else { // we need to process the boards
             cell boardCell = { stoi(line) };
             potentialBoard.push_back(boardCell);
             cellCount++;
 
-            if (cellCount == BOARD_DIM * BOARD_DIM) {
+            if (cellCount == BOARD_DIM * BOARD_DIM) { // we are at the end of this board, add it to the list and start again for the next one
                 cellCount = 0;
                 boards.push_back(potentialBoard);
                 potentialBoard.clear();
@@ -47,10 +48,11 @@ int main(int argc, char **argv){
     bool winner = false;
     vector<cell> winningBoard;
     int winningNumber;
-    for (int number: numbers) {
-        for (int boardNo = 0; boardNo < boards.size(); boardNo++) {    
-            tickNumber(boards, boardNo, number);
-            checkSolution(boards, boardNo, number, winner);
+
+    for (int number: numbers) { // for each of the numbers drawn...
+        for (int boardNo = 0; boardNo < boards.size(); boardNo++) { // for each board...
+            tickNumber(boards, boardNo, number); //tick off the number
+            checkSolution(boards, boardNo, number, winner); // and check for a solution
 
             if (winner) {
                 winningBoard = boards[boardNo];
@@ -77,6 +79,7 @@ int main(int argc, char **argv){
     return 0;
 }
 
+//process the comma-seperated input numbers and add them to a vector
 vector<int> createNumbers(string line){
     vector<int> numbers;
     size_t pos = 0;
@@ -91,6 +94,7 @@ vector<int> createNumbers(string line){
     return numbers;
 }
 
+//look for a solution on the given board (specified by boardNo) and set the winning flag if won
 void checkSolution(vector<vector<cell>> boards, int boardNo, int number, bool &winner) {
 
     // future improvement? check board[X, Y] AND board[Y, X] at same time? Wouldn't allow breaking. Could be less complex.
@@ -123,6 +127,7 @@ void checkSolution(vector<vector<cell>> boards, int boardNo, int number, bool &w
     }
 }
 
+// tick off the number at the specified board (given a boardNo)
 void tickNumber(vector<vector<cell>> &boards, int boardNo, int number) {
     for (auto &c: boards[boardNo]) {
         if (c.value == number) {
