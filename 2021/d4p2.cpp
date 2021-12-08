@@ -69,8 +69,6 @@ int main(int argc, char **argv){
             }
         }
 
-        printf("boards left: %d\n", remainingBoards.count());
-
         if (remainingBoards.count() == 1 && !assignedLastWinningBoardNo) {
             for (dynamic_bitset<>::size_type i = 0; i < remainingBoards.size(); i++) {
                 if (remainingBoards[i] == 1) {
