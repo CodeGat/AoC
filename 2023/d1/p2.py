@@ -1,4 +1,4 @@
-nums: dict[int, str] = {
+nums: dict[str, int] = {
     "one": 1,
     "two": 2,
     "three": 3,
