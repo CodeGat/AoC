@@ -12,10 +12,10 @@ with open("./2023/d2/in.txt", "r") as f:
             for cubes in subset.strip().split(","):
                 number_str, colour = cubes.strip().split(" ")
                 number: int = int(number_str)
-                
+
                 if int(number_str) > max_colours[colour]:
                     max_colours[colour] = number
-                    
+
         result += functools.reduce(lambda a, b: a * b, max_colours.values())
         max_colours = dict.fromkeys(max_colours, 0)
 
