@@ -19,8 +19,8 @@ with open("./2023/d1/in.txt", "r") as inp:
         f_modified_line: str = line.rstrip()
         r_modified_line: str = f_modified_line[::-1]
 
-        pattern: str = 'one|two|three|four|five|six|seven|eight|nine'
-        f_pattern = re.compile(f'({pattern})')
+        pattern: str = "one|two|three|four|five|six|seven|eight|nine"
+        f_pattern = re.compile(f"({pattern})")
         r_pattern = re.compile(f"({pattern[::-1]})")
 
         f_matches = f_pattern.findall(f_modified_line)
@@ -29,7 +29,9 @@ with open("./2023/d1/in.txt", "r") as inp:
 
         r_matches = r_pattern.findall(r_modified_line)
         if len(r_matches) != 0:
-            r_modified_line = r_pattern.sub(str(nums[r_matches[0][::-1]]), r_modified_line, 1)
+            r_modified_line = r_pattern.sub(
+                str(nums[r_matches[0][::-1]]), r_modified_line, 1
+            )
 
         total += int(
             next(ch for ch in f_modified_line if ch.isdigit())
