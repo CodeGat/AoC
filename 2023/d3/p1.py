@@ -4,7 +4,8 @@ from typing import Iterator
 from functools import reduce
 import numpy as np
 
-symbols: str = punctuation.replace('.', '')
+symbols: str = punctuation.replace(".", "")
+
 
 def is_part_number(schematic: np.ndarray, y: int, x_start: int, x_end: int) -> bool:
     global symbols
@@ -16,7 +17,7 @@ def is_part_number(schematic: np.ndarray, y: int, x_start: int, x_end: int) -> b
 
     print(surrounding_cells)
 
-    surrounding_cells_str: str = ''.join(surrounding_cells.flatten())
+    surrounding_cells_str: str = "".join(surrounding_cells.flatten())
 
     if any(symbol in surrounding_cells_str for symbol in symbols):
         print("Symbol found!")
@@ -24,6 +25,7 @@ def is_part_number(schematic: np.ndarray, y: int, x_start: int, x_end: int) -> b
     else:
         print("No symbol found")
         return False
+
 
 with open("./2023/d3/in.txt") as f:
     # setup structures
@@ -36,7 +38,9 @@ with open("./2023/d3/in.txt") as f:
         number_matches: Iterator[Match[str]] = finditer("[0-9]+", line)
 
         for number_match in number_matches:
-            if is_part_number(np_schematic, y, number_match.start(), number_match.end()):
+            if is_part_number(
+                np_schematic, y, number_match.start(), number_match.end()
+            ):
                 part_numbers.append(int(number_match.group()))
 
     result: int = reduce(lambda x, y: x + y, part_numbers)
