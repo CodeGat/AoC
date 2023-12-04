@@ -1,3 +1,6 @@
+from ast import mod
+import re
+
 nums: dict[str, int] = {
     "one": 1,
     "two": 2,
@@ -12,43 +15,25 @@ nums: dict[str, int] = {
 total: int = 0
 
 with open("./2023/d1/in.txt", "r") as inp:
-    for line in inp:
-        replaced_line: str = ""
-        token: str = ""
-        nums_matching_this_token: dict[str, int] = nums.copy()
+    for ix, line in enumerate(inp):
+        f_modified_line: str = line.rstrip()
+        r_modified_line: str = f_modified_line[::-1]
 
-        for ch in line:
-            token += ch
+        pattern: str = 'one|two|three|four|five|six|seven|eight|nine'
+        f_pattern = re.compile(f'({pattern})')
+        r_pattern = re.compile(f"({pattern[::-1]})")
 
-            # Case 1: it is a digit, move on
-            if ch.isdigit():
-                replaced_line += token
-                token = ""
-                nums_matching_this_token = nums.copy()
-                continue
+        f_matches = f_pattern.findall(f_modified_line)
+        if len(f_matches) != 0:
+            f_modified_line = f_pattern.sub(str(nums[f_matches[0]]), f_modified_line, 1)
 
-            keys: list[str] = list(nums_matching_this_token.keys())
-
-            for key in keys:
-                if not key.startswith(token):
-                    nums_matching_this_token.pop(key)
-
-            if len(nums_matching_this_token) == 0:
-                token = ch
-                nums_matching_this_token = nums.copy()
-
-            if token in nums.keys():
-                replaced_line += str(nums.get(token, token))
-                token = ""
-                nums_matching_this_token = nums.copy()
-
-        nums_matching_this_token = nums.copy()
-
-        print(replaced_line)
+        r_matches = r_pattern.findall(r_modified_line)
+        if len(r_matches) != 0:
+            r_modified_line = r_pattern.sub(str(nums[r_matches[0][::-1]]), r_modified_line, 1)
 
         total += int(
-            next(ch for ch in replaced_line if ch.isdigit())
-            + next(ch for ch in reversed(replaced_line) if ch.isdigit())
+            next(ch for ch in f_modified_line if ch.isdigit())
+            + next(ch for ch in r_modified_line if ch.isdigit())
         )
 
 print(f"-------------------\n{total}")
