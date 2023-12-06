@@ -4,7 +4,7 @@ from uu import Error
 
 def garden_map(seed_range: tuple[int, int], mapper: list[str]) -> list[tuple[int, int]]:
     mapped_seed_ranges: set[tuple[int, int]] = set()
-    print(f'>>> Mapping seed {seed_range}')
+    print(f">>> Mapping seed {seed_range}")
 
     for map in mapper:
         print(f"For map {map}...")
@@ -22,10 +22,11 @@ def garden_map(seed_range: tuple[int, int], mapper: list[str]) -> list[tuple[int
             for start, end in mappable_seed_ranges
         ]
         mapped_seed_ranges.update(newly_mapped_seed_ranges)
-        print(f'kept: {same_seed_ranges}, newly mapped: {[f"{before[0]}-{before[1]} -> {after[0]}-{after[1]}" for before, after in zip(mappable_seed_ranges, newly_mapped_seed_ranges)]}\n')
+        print(
+            f'kept: {same_seed_ranges}, newly mapped: {[f"{before[0]}-{before[1]} -> {after[0]}-{after[1]}" for before, after in zip(mappable_seed_ranges, newly_mapped_seed_ranges)]}\n'
+        )
 
     return list(mapped_seed_ranges)
-
 
     # for map in mapper:
     #     print(f"For map {map} with seed_ranges {mapped_seed_ranges}...")
@@ -61,16 +62,22 @@ def intersectional_split(
     seed_ranges_that_stay_same: list[tuple[int, int]] = []
     seed_ranges_to_map: list[tuple[int, int]] = []
 
-    print(f"intersection: checking intersection of seed range {seed_range_start}-{seed_range_end} and map {map_start}-{map_end}...", end='')
+    print(
+        f"intersection: checking intersection of seed range {seed_range_start}-{seed_range_end} and map {map_start}-{map_end}...",
+        end="",
+    )
 
-    overlap_start, overlap_end = (max(seed_range_start, map_start), min(seed_range_end, map_end))
+    overlap_start, overlap_end = (
+        max(seed_range_start, map_start),
+        min(seed_range_end, map_end),
+    )
 
     if overlap_start > overlap_end:
         # no overlap
         # seed: [    ]
         # map:         [--]
         # final:[    ]
-        print('no overlap')
+        print("no overlap")
         seed_ranges_that_stay_same.append((seed_range_start, seed_range_end))
 
     elif overlap_start == map_start and overlap_end == map_end:
@@ -78,7 +85,7 @@ def intersectional_split(
         # seed: [           ]
         # map:     [----]
         # final:[ ][----][  ]
-        print('seed range envelops map entirely')
+        print("seed range envelops map entirely")
         if seed_range_start != overlap_start:
             seed_ranges_that_stay_same.append((seed_range_start, overlap_start - 1))
         seed_ranges_to_map.append((overlap_start, overlap_end))
@@ -90,7 +97,7 @@ def intersectional_split(
         # seed:   [   ]
         # map:  [--------]
         # final:  [---]
-        print('seed range is enveloped by map entirely')
+        print("seed range is enveloped by map entirely")
         seed_ranges_to_map.append((seed_range_start, seed_range_end))
 
     elif overlap_start == map_start:
@@ -98,7 +105,7 @@ def intersectional_split(
         # seed:  [     ]
         # map:      [-----]
         # final: [ ][--]
-        print('seed range overlaps from left of map')
+        print("seed range overlaps from left of map")
         if seed_range_start != overlap_start:
             seed_ranges_that_stay_same.append((seed_range_start, overlap_start - 1))
         seed_ranges_to_map.append((overlap_start, seed_range_end))
@@ -108,12 +115,14 @@ def intersectional_split(
         # seed:     [    ]
         # map:   [----]
         # final:    [-][ ]
-        print('seed range overlaps from right of map')
+        print("seed range overlaps from right of map")
         seed_ranges_to_map.append((overlap_start, map_end))
         if seed_range_end != overlap_end:
             seed_ranges_that_stay_same.append((map_end + 1, seed_range_end))
     else:
-        print(f"Somehow, {seed_range_start}-{seed_range_end} has no relation to {map_start}-{map_end}")
+        print(
+            f"Somehow, {seed_range_start}-{seed_range_end} has no relation to {map_start}-{map_end}"
+        )
         raise Error
 
     return seed_ranges_that_stay_same, seed_ranges_to_map
@@ -132,10 +141,12 @@ with open("./2023/d5/in.txt") as f:
 
     for mapper in mappers:
         print(f"Going to map {seed_range} with {mapper}...")
-        mapped_seed_ranges: list[list[tuple[int, int]]] = list(map(lambda s: garden_map(s, mapper), seed_range))
+        mapped_seed_ranges: list[list[tuple[int, int]]] = list(
+            map(lambda s: garden_map(s, mapper), seed_range)
+        )
         seed_range = reduce(lambda l1, l2: l1 + l2, mapped_seed_ranges)
         # TODO: find a way to merge ranges that are already noted down.
         print(seed_range)
-        print('-'*25)
+        print("-" * 25)
 
     print(min([start for start, _ in seed_range]))
