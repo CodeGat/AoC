@@ -3,34 +3,55 @@ from uu import Error
 
 
 def garden_map(seed_range: tuple[int, int], mapper: list[str]) -> list[tuple[int, int]]:
-    mapped_seed_ranges: list[tuple[int, int]] = [seed_range]
-    next_mapped_seed_ranges: list[tuple[int, int]] = []
+    mapped_seed_ranges: set[tuple[int, int]] = set()
+    print(f'>>> Mapping seed {seed_range}')
 
     for map in mapper:
-        print(f"For map {map} with seed_ranges {mapped_seed_ranges}...")
-        for mapped_seed_range in mapped_seed_ranges:
-            map_components: list[int] = [int(comp) for comp in map.split()]
-            dest, src, range = map_components
+        print(f"For map {map}...")
+        map_components: list[int] = [int(comp) for comp in map.split()]
+        dest, src, range = map_components
 
-            # how to we keep track of the dest ones?
-            same_seed_ranges, mappable_seed_ranges = intersectional_split(
-                mapped_seed_range[0], mapped_seed_range[1], src, src + range - 1
-            )
+        same_seed_ranges, mappable_seed_ranges = intersectional_split(
+            seed_range[0], seed_range[1], src, src + range - 1
+        )
 
-            next_mapped_seed_ranges.extend(same_seed_ranges)
+        mapped_seed_ranges.update(same_seed_ranges)
 
-            # check p1 implementation of this function...just in case
-            newly_mapped_seed_ranges: list[tuple[int, int]] = [
-                (dest + start - src, dest + end - src)
-                for start, end in mappable_seed_ranges
-            ]
-            next_mapped_seed_ranges.extend(newly_mapped_seed_ranges)
-            print(f'kept: {same_seed_ranges}, newly mapped: {[f"{before[0]}-{before[1]} -> {after[0]}-{after[1]}" for before, after in zip(mappable_seed_ranges, newly_mapped_seed_ranges)]}\n')
+        newly_mapped_seed_ranges: list[tuple[int, int]] = [
+            (dest + start - src, dest + end - src)
+            for start, end in mappable_seed_ranges
+        ]
+        mapped_seed_ranges.update(newly_mapped_seed_ranges)
+        print(f'kept: {same_seed_ranges}, newly mapped: {[f"{before[0]}-{before[1]} -> {after[0]}-{after[1]}" for before, after in zip(mappable_seed_ranges, newly_mapped_seed_ranges)]}\n')
 
-        mapped_seed_ranges = next_mapped_seed_ranges
-        next_mapped_seed_ranges = []
+    return list(mapped_seed_ranges)
 
-    return mapped_seed_ranges
+
+    # for map in mapper:
+    #     print(f"For map {map} with seed_ranges {mapped_seed_ranges}...")
+    #     for mapped_seed_range in mapped_seed_ranges:
+    #         map_components: list[int] = [int(comp) for comp in map.split()]
+    #         dest, src, range = map_components
+
+    #         # how to we keep track of the dest ones?
+    #         same_seed_ranges, mappable_seed_ranges = intersectional_split(
+    #             mapped_seed_range[0], mapped_seed_range[1], src, src + range - 1
+    #         )
+
+    #         next_mapped_seed_ranges.extend(same_seed_ranges)
+
+    #         # check p1 implementation of this function...just in case
+    #         newly_mapped_seed_ranges: list[tuple[int, int]] = [
+    #             (dest + start - src, dest + end - src)
+    #             for start, end in mappable_seed_ranges
+    #         ]
+    #         next_mapped_seed_ranges.extend(newly_mapped_seed_ranges)
+    #         print(f'kept: {same_seed_ranges}, newly mapped: {[f"{before[0]}-{before[1]} -> {after[0]}-{after[1]}" for before, after in zip(mappable_seed_ranges, newly_mapped_seed_ranges)]}\n')
+
+    #     mapped_seed_ranges = next_mapped_seed_ranges
+    #     next_mapped_seed_ranges = []
+
+    # return mapped_seed_ranges
 
 
 def intersectional_split(
@@ -56,11 +77,13 @@ def intersectional_split(
         # seed_range envelops all of map
         # seed: [           ]
         # map:     [----]
-        #final: [ ][----][  ]
+        # final:[ ][----][  ]
         print('seed range envelops map entirely')
-        seed_ranges_that_stay_same.append((seed_range_start, overlap_start - 1))
+        if seed_range_start != overlap_start:
+            seed_ranges_that_stay_same.append((seed_range_start, overlap_start - 1))
         seed_ranges_to_map.append((overlap_start, overlap_end))
-        seed_ranges_that_stay_same.append((overlap_end + 1, seed_range_end))
+        if seed_range_end != overlap_end:
+            seed_ranges_that_stay_same.append((overlap_end + 1, seed_range_end))
 
     elif overlap_start == seed_range_start and overlap_end == seed_range_end:
         # seed_range is enveloped by all of map
@@ -75,8 +98,9 @@ def intersectional_split(
         # seed:  [     ]
         # map:      [-----]
         # final: [ ][--]
-        print('seed range overlaps from left')
-        seed_ranges_that_stay_same.append((seed_range_start, overlap_start - 1))
+        print('seed range overlaps from left of map')
+        if seed_range_start != overlap_start:
+            seed_ranges_that_stay_same.append((seed_range_start, overlap_start - 1))
         seed_ranges_to_map.append((overlap_start, seed_range_end))
 
     elif overlap_start == seed_range_start:
@@ -84,9 +108,10 @@ def intersectional_split(
         # seed:     [    ]
         # map:   [----]
         # final:    [-][ ]
-        print('seed map overlaps from right')
+        print('seed range overlaps from right of map')
         seed_ranges_to_map.append((overlap_start, map_end))
-        seed_ranges_that_stay_same.append((map_end + 1, seed_range_start))
+        if seed_range_end != overlap_end:
+            seed_ranges_that_stay_same.append((map_end + 1, seed_range_end))
     else:
         print(f"Somehow, {seed_range_start}-{seed_range_end} has no relation to {map_start}-{map_end}")
         raise Error
@@ -109,7 +134,7 @@ with open("./2023/d5/in.txt") as f:
         print(f"Going to map {seed_range} with {mapper}...")
         mapped_seed_ranges: list[list[tuple[int, int]]] = list(map(lambda s: garden_map(s, mapper), seed_range))
         seed_range = reduce(lambda l1, l2: l1 + l2, mapped_seed_ranges)
-
+        # TODO: find a way to merge ranges that are already noted down.
         print(seed_range)
         print('-'*25)
 
