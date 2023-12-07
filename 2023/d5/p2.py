@@ -145,7 +145,6 @@ with open("./2023/d5/in.txt") as f:
             map(lambda s: garden_map(s, mapper), seed_range)
         )
         seed_range = reduce(lambda l1, l2: l1 + l2, mapped_seed_ranges)
-        # TODO: find a way to merge ranges that are already noted down.
         print(seed_range)
         print("-" * 25)
 

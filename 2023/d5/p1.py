@@ -8,10 +8,13 @@ def garden_map(seed: int, mapper: list[str]) -> int:
         map_components: list[int] = [int(comp) for comp in map.split()]
         dest, src, range = map_components
 
-        print(f"For seed {seed}, {src} < {seed} < {src + range - 1}")
+        print(f"For seed {seed}, {src} < {seed} < {src + range - 1}: ", end="")
 
         if src <= seed <= src + range - 1:
             mapped_seed = dest + seed - src
+            print(f"mapped to {mapped_seed}")
+        else:
+            print("")
 
     return mapped_seed
 
